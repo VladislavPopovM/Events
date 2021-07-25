@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+
+{% block title %}Personal area{% endblock title %}
+
+{% block content %}
+<h1 style="text-align: center;">Personal area</h1>
+{% if type_acc == 'staff' %}
+<div class="btn-group" role="group" aria-label="Basic example">
+    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#simple">Create simple event</button>
+    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#detailed">Create detailed event</button>
+</div>
+{% endif %}
+
+<div class="main_content">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Date and time</th>
+                {% if type_acc == 'staff' %}
+                    <th scope="col">Control</th>
+                {% endif %}
+            </tr>
+        </thead>
+        {% for i in ES %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ i.title }}</td>
+                <td>{{ i.date_event }}</td>
+                {% if type_acc == 'staff' %}
+                    <td><a style="color: blue; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#check_p_S" onclick="insert_s_id('{{ i.id }}')">Check</a></td>
+                {% endif %}
+            </tr>
+        {% empty %}
+            <th colspan={% if type_acc == 'staff' %} 4 {% else %}  3 {% endif %} style="text-align: center;">Event simple is empty</th>
+        {% endfor %}
+    </table>
+    
+    
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Date and time</th>
+                {% if type_acc == 'staff' %}
+                    <th scope="col">Control</th>
+                {% endif %}
+            </tr>
+        </thead>
+        {% for i in ED %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <th>{{ i.title }}</th>
+                <td>{{ i.date_event }}</td>
+                {% if type_acc == 'staff' %}
+                    <td><a style="color: blue; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#check_p_D" onclick="insert_d_id('{{ i.id }}')">Check</a></td>
+                {% endif %}
+            </tr>
+        {% empty %}
+            <th colspan={% if type_acc == 'staff' %} 4 {% else %}  3 {% endif %} style="text-align: center;">Event detailed is empty</th>
+        {% endfor %}
+    </table>
+</div>
+
+{% if type_acc == 'staff' %}
+<!-- MODALS -->
+
+<!-- Insert event S -->
+<div class="modal fade" id="simple" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Creator simple event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'add_event_s' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Title</label>
+                            <input name="title" class="form-control" id="exampleFormControlInput1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Content</label>
+                            <textarea name="content" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                            <input name="datetime" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                            <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Insert event D -->
+<div class="modal fade" id="detailed" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Creator detailed event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'add_event_d' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Title</label>
+                            <input name="title" class="form-control" id="exampleFormControlInput1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Content</label>
+                            <textarea name="content" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                        <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                            <input name="datetime" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2"/>
+                            <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+  
+<!-- Check Participates S -->
+<div class="modal fade" id="check_p_S" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">email</th>
+                  </tr>
+                </thead>
+                <tbody id="s_tbody">
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- Check Participates D -->
+<div class="modal fade" id="check_p_D" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">email</th>
+                  </tr>
+                </thead>
+                <tbody id="d_tbody">
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- END MODALS -->
+
+<script>
+$("#datetimepicker1").datetimepicker();
+$("#datetimepicker2").datetimepicker();
+
+function insert_s_id(id){
+    URL =  "/json_Participate_s/"+ id +"/"
+    $.ajax({
+		url: URL,  
+		dataType: 'json',
+		success: function (response) {
+            console.log(response.data)
+            CloseTable('s')
+            addRow(response.data, 's')
+        }
+    })
+}
+
+function insert_d_id(id){
+    URL =  "/json_Participate_d/"+ id +"/"
+    $.ajax({
+		url: URL,  
+		dataType: 'json',
+		success: function (response) {
+            console.log(response.data)
+            CloseTable('d')
+            addRow(response.data, 'd')
+        }
+    })
+}
+
+function CloseTable(table){
+    id_table = undefined
+    if(table.localeCompare('s') == 0){
+        id_table = 's_tbody'
+    }else if(table.localeCompare('d') == 0){
+        id_table = 'd_tbody'
+    }
+
+    $('#'+ id_table + ' tr').remove()
+}
+
+function addRow(list, table){
+    id_table = undefined
+    if(table.localeCompare('s') == 0){
+        id_table = 's_tbody'
+    }else if(table.localeCompare('d') == 0){
+        id_table = 'd_tbody'
+    }
+
+    var tbody = document.getElementById(id_table);
+    count = 1
+    for (let j = 0; j < list.length; j++){
+        var row = document.createElement("TR");
+        var td1 = document.createElement("TD");
+        var td2 = document.createElement("TD");
+        td1.innerHTML = count;
+        td2.innerHTML = list[j];
+        row.appendChild(td1);
+        row.appendChild(td2);
+        tbody.appendChild(row);
+        count++;
+    }
+}
+
+</script>
+{% endif %}
+<style>
+    .btn-group{
+        margin-bottom: 10px;
+        float: right;
+    } 
+
+    .table{
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .main_content{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+    }
+</style>
+{% endblock content %}

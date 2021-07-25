@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+    <h1>Homepage</h1>
+    {% if user.is_authenticated %}
+        Hi {{ user.email }}!
+        {{ type_acc }}
+        <div id="controls" style="display:flex; justify-content: space-between; width: 200px; margin-bottom: 10px;">
+            <a href="{% url 'logout' %}">Log Out</a>
+
+            <a href="{% url 'personal_area' %}">Personal area</a>
+        </div>
+        <div class="main_content">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Date and time</th>
+                        {% if type_acc == 'client' %}
+                            <th scope="col">Control</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                {% for i in ES %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ i.title }}</td>
+                        <td>{{ i.date_event }}</td>
+                        {% if type_acc == 'client' %}
+                            <td><a href="{% url 'participate_s' i.id %}">Participate</a></td>
+                        {% endif %}
+                    </tr>
+                {% empty %}
+                    <th colspan={% if type_acc == 'client' %} 4 {% else %}  3 {% endif %} style="text-align: center;">Event simple is empty</th>
+                {% endfor %}
+            </table>
+            
+            
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Date and time</th>
+                        {% if type_acc == 'client' %}
+                            <th scope="col">Control</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                {% for i in ED %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <th>{{ i.title }}</th>
+                        <td>{{ i.date_event }}</td>
+                        {% if type_acc == 'client' %}
+                            <td><a style="color: blue; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#detailed" onclick="insertid('{{ i.id }}')">Participate</a></td>
+                        {% endif %}
+                    </tr>
+                {% empty %}
+                    <th colspan={% if type_acc == 'client' %} 4 {% else %}  3 {% endif %} style="text-align: center;">Event detailed is empty</th>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">Log In</a>
+        <a href="{% url 'signup' %}">Sign Up</a>
+    {% endif %}
+
+
+<!-- MODAL -->
+
+<div class="modal fade" id="detailed" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Creator detailed event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'participate_d' %}" method="POST" enctype="multipart/form-data" name="form">
+                {% csrf_token %}
+                <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Title</label>
+                            <input name="title" class="form-control" id="exampleFormControlInput1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label">Content</label>
+                            <textarea name="content" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">Default file input example</label>
+                            <input name="file" class="form-control" type="file" id="formFile">
+                        </div>
+                        <input name="id" type="text" style="display: none;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- END MODAL -->
+<script>
+
+function insertid(id){
+    document.form.id.value=id
+}
+
+</script>
+{% endblock content %}
